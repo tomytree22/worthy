@@ -65,7 +65,6 @@ function insertaXML (proveedor, inicial, final, movimientos, objectXML) {
 	client.query(queryStr, function (err, results, fields) {
 		if (err) {
 			logger.info(queryStr);
-			throw err;
 		} else {
 			if (results.affectedRows == 1){		
 				//Step 2: Insert the movements in the MySQL DB
@@ -105,7 +104,6 @@ function insertaMovimientos(xml, mso, objeto){
 				logger.info(queryStr);
 				error = true;
 				finalStep( objeto.root.movimiento.length, x, error)
-				throw err;
 			} else {
 				if (results.affectedRows == 1){						error = false;
 					finalStep( objeto.root.movimiento.length, x, error)
