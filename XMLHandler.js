@@ -15,6 +15,7 @@ client.query('USE ' + mysql_config.database);
 
 var filename = "";
 var mso		 = "";
+var error	 = false;
 
 function handleFile(m, fn){
 	filename = fn;
@@ -25,7 +26,10 @@ function handleFile(m, fn){
 
 function handleXML(err, data) {
 	if (err){
-		throw err;
+		system.spawn('cp', ['-r', config.xml_deposit(mso)+filename, config.xml_error(mso)+filename]);
+		system.spawn('cp', ['-r', config.xml_deposit(mso)+filename, config.xml_backup()+filename]);
+		system.spawn('rm', [config.xml_deposit(mso)+filename]);
+		throw new Error('['+mso+'][file_error] - Error en archivo '+filename+' marca tener un error de lectura de archivo eviando archivo a '+config.xml_error(mso)+filename+" e ignorando flujo");
 	} else {
 		parser.parseString(data, handleParsedData);
 	}
@@ -74,6 +78,7 @@ function insertaXML (proveedor, inicial, final, movimientos, objectXML) {
 }
 
 function insertaMovimientos(xml, mso, objeto){
+	error = false;	
 	for (var x = 0; x < objeto.root.movimiento.length; x++ ){
 		var idmso 		= objeto.root.movimiento[x].id;
 		var nombre		= objeto.root.movimiento[x].usuario[0].nombre;
@@ -98,16 +103,32 @@ function insertaMovimientos(xml, mso, objeto){
 		client.query(queryStr, function (err, results, fields) {
 			if (err) {
 				logger.info(queryStr);
+				error = true;
+				finalStep( objeto.root.movimiento.length, x, error)
 				throw err;
 			} else {
-				if (results.affectedRows == 1){
-					system.spawn('cp', ['-r', config.xml_deposit(mso)+filename, config.xml_backup()+"/ok/"+filename]);
-					system.spawn('rm', [config.xml_deposit(mso)+filename]);
+				if (results.affectedRows == 1){						error = false;
+					finalStep( objeto.root.movimiento.length, x, error)
 				} else {
+					error = true;
 					logger.info(queryStr);
+					finalStep( objeto.root.movimiento.length, x, error)
 				}	
 			}	
 		});		
+	}	
+}
+
+function finalStep(original, count, error){
+	if (original == count){
+		if (error){
+			system.spawn('cp', ['-r', config.xml_deposit(mso)+filename, config.xml_error(mso)+filename]);
+			system.spawn('cp', ['-r', config.xml_deposit(mso)+filename, config.xml_backup()+filename]);
+			system.spawn('rm', [config.xml_deposit(mso)+filename]);
+		} else {
+			system.spawn('cp', ['-r', config.xml_deposit(mso)+filename, config.xml_backup()+"/ok/"+filename]);
+			system.spawn('rm', [config.xml_deposit(mso)+filename]);
+		}		
 	}
 }
 
