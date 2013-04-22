@@ -12,22 +12,15 @@ veo
   .on('add', function(path) {
 	console.log('File', path, 'has been added');
 	if (path.substr(-3) == "xml" ){
-		var posI =  path.lastIndexOf("_")+1;
-		var posF =  path.lastIndexOf(".");
-		console.log("New File Received ("+new Date()+") : [MSO] "+path.substr(posI, posF-posI)+" [Path] "+config.xml_deposit(path.substr(posI, posF-posI))+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
+		var msoS = path.substr(6);
+		msoS = msoS.substr(0, msoS.indexOf("/"));
+		console.log("New File Received ("+new Date()+") : [MSO] "+msoS+" [Path] "+config.xml_deposit(msoS)+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
 		sleep.sleep(5);
-		xmlHandler.handleFile(path.substr(posI, posF-posI), path.substr(path.lastIndexOf("/")+1));
+		xmlHandler.handleFile(msoS, path.substr(path.lastIndexOf("/")+1));
 	}
   })
   .on('change', function(path) {
 	console.log('File', path, 'has been changed');
-	if (path.substr(-3) == "xml" ){
-			var posI =  path.lastIndexOf("_")+1;
-			var posF =  path.lastIndexOf(".");
-			console.log("New File Received ("+new Date()+") : [MSO] "+path.substr(posI, posF-posI)+" [Path] "+config.xml_deposit(path.substr(posI, posF-posI))+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
-			sleep.sleep(5);			
-			xmlHandler.handleFile(path.substr(posI, posF-posI), path.substr(path.lastIndexOf("/")+1));
-	}
   })
   .on('unlink', function(path) {
 	console.log('File', path, 'has been removed');
@@ -42,22 +35,15 @@ cablevision
   .on('add', function(path) {
 	console.log('File', path, 'has been added');
 	if (path.substr(-3) == "xml" ){
-		var posI =  path.lastIndexOf("_")+1;
-		var posF =  path.lastIndexOf(".");
-		console.log("New File Received ("+new Date()+") : [MSO] "+path.substr(posI, posF-posI)+" [Path] "+config.xml_deposit(path.substr(posI, posF-posI))+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
+		var msoS = path.substr(6);
+		msoS = msoS.substr(0, msoS.indexOf("/"));
+		console.log("New File Received ("+new Date()+") : [MSO] "+msoS+" [Path] "+config.xml_deposit(msoS)+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
 		sleep.sleep(5);
-		xmlHandler.handleFile(path.substr(posI, posF-posI), path.substr(path.lastIndexOf("/")+1));
+		xmlHandler.handleFile(msoS, path.substr(path.lastIndexOf("/")+1));
 	}
   })
   .on('change', function(path) {
 	console.log('File', path, 'has been changed');
-	if (path.substr(-3) == "xml" ){
-			var posI =  path.lastIndexOf("_")+1;
-			var posF =  path.lastIndexOf(".");
-			console.log("New File Received ("+new Date()+") : [MSO] "+path.substr(posI, posF-posI)+" [Path] "+config.xml_deposit(path.substr(posI, posF-posI))+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
-			sleep.sleep(5);			
-			xmlHandler.handleFile(path.substr(posI, posF-posI), path.substr(path.lastIndexOf("/")+1));
-	}
   })
   .on('unlink', function(path) {
 	console.log('File', path, 'has been removed');
@@ -72,22 +58,15 @@ cablemas
   .on('add', function(path) {
 	console.log('File', path, 'has been added');
 	if (path.substr(-3) == "xml" ){
-		var posI =  path.lastIndexOf("_")+1;
-		var posF =  path.lastIndexOf(".");
-		console.log("New File Received ("+new Date()+") : [MSO] "+path.substr(posI, posF-posI)+" [Path] "+config.xml_deposit(path.substr(posI, posF-posI))+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
+		var msoS = path.substr(6);
+		msoS = msoS.substr(0, msoS.indexOf("/"));
+		console.log("New File Received ("+new Date()+") : [MSO] "+msoS+" [Path] "+config.xml_deposit(msoS)+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
 		sleep.sleep(5);
-		xmlHandler.handleFile(path.substr(posI, posF-posI), path.substr(path.lastIndexOf("/")+1));
+		xmlHandler.handleFile(msoS, path.substr(path.lastIndexOf("/")+1));
 	}
   })
   .on('change', function(path) {
 	console.log('File', path, 'has been changed');
-	if (path.substr(-3) == "xml" ){
-			var posI =  path.lastIndexOf("_")+1;
-			var posF =  path.lastIndexOf(".");
-			console.log("New File Received ("+new Date()+") : [MSO] "+path.substr(posI, posF-posI)+" [Path] "+config.xml_deposit(path.substr(posI, posF-posI))+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
-			sleep.sleep(5);			
-			xmlHandler.handleFile(path.substr(posI, posF-posI), path.substr(path.lastIndexOf("/")+1));
-	}
   })
   .on('unlink', function(path) {
 	console.log('File', path, 'has been removed');
@@ -102,22 +81,15 @@ sky
   .on('add', function(path) {
 	console.log('File', path, 'has been added');
 	if (path.substr(-3) == "xml" ){
-		var posI =  path.lastIndexOf("_")+1;
-		var posF =  path.lastIndexOf(".");
-		console.log("New File Received ("+new Date()+") : [MSO] "+path.substr(posI, posF-posI)+" [Path] "+config.xml_deposit(path.substr(posI, posF-posI))+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
+		var msoS = path.substr(6);
+		msoS = msoS.substr(0, msoS.indexOf("/"));
+		console.log("New File Received ("+new Date()+") : [MSO] "+msoS+" [Path] "+config.xml_deposit(msoS)+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
 		sleep.sleep(5);
-		xmlHandler.handleFile(path.substr(posI, posF-posI), path.substr(path.lastIndexOf("/")+1));
+		xmlHandler.handleFile(msoS, path.substr(path.lastIndexOf("/")+1));
 	}
   })
   .on('change', function(path) {
 	console.log('File', path, 'has been changed');
-	if (path.substr(-3) == "xml" ){
-			var posI =  path.lastIndexOf("_")+1;
-			var posF =  path.lastIndexOf(".");
-			console.log("New File Received ("+new Date()+") : [MSO] "+path.substr(posI, posF-posI)+" [Path] "+config.xml_deposit(path.substr(posI, posF-posI))+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
-			sleep.sleep(5);			
-			xmlHandler.handleFile(path.substr(posI, posF-posI), path.substr(path.lastIndexOf("/")+1));
-	}
   })
   .on('unlink', function(path) {
 	console.log('File', path, 'has been removed');
