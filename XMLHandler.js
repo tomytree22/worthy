@@ -9,13 +9,12 @@ var parser = new xml2js.Parser();
 
 var system = require('child_process');
 
-var mysql_config = config.mysql;
-var client = mysql.createConnection(mysql_config.client_qa);
-client.query('USE ' + mysql_config.database);
-
 var filename = "";
 var mso		 = "";
 var error	 = false;
+
+var mysql_config;
+var client;
 
 function handleFile(m, fn){
 	filename = fn;
@@ -55,6 +54,8 @@ function handleParsedData(err, objectXML){
 			throw new Error('['+mso+']['+movimientos+']['+objectXML.root.movimiento.length+'] - Error en archivo '+filename+' marca tener '+movimientos+' movimiento(s) cuando en realidad hay '+objectXML.root.movimiento.length+' movimiento(s) enviando archivo a '+config.xml_error(mso)+filename+" e ignorando flujo");
 		} else {
 			//Step 1: Insert the XML header in MySQL DB
+			mysql_config = config.mysql;
+			client = mysql.createPool(mysql_config.client_qa);
 			insertaXML(proveedor, inicial, final, movimientos, objectXML);
 		}				
 	}		
@@ -62,21 +63,29 @@ function handleParsedData(err, objectXML){
 
 function insertaXML (proveedor, inicial, final, movimientos, objectXML) {
 	var queryStr = "INSERT INTO  `msodb`.`xml` (`id` ,`proveedor` ,`inicial` ,`final` ,`movimientos`) VALUES (NULL ,  '"+proveedor+"',  '"+inicial+"',  '"+final+"',  "+movimientos+");";
-	client.query(queryStr, function (err, results, fields) {
-		if (err) {
-			logger.info(queryStr);
+	client.getConnection(function (err0, connection) {
+		if (err0){
+			system.spawn('cp', ['-r', config.xml_deposit(mso)+filename, config.xml_backup()+filename]);
+			system.spawn('rm', [config.xml_deposit(mso)+filename]);
+			throw new Error('['+mso+']['+filename+'] - Error en MySQL no hay conexión, se requiere ingestar nuevamente el archivo.');
 		} else {
-			if (results.affectedRows == 1){		
-				//Step 2: Insert the movements in the MySQL DB
-				insertaMovimientos(results.insertId, proveedor, objectXML);
-			} else {
-				logger.info(queryStr);
-			}	
-		}	
-	});
+			connection.query('USE ' + mysql_config.database);
+			connection.query(queryStr, function (err, results, fields) {
+					if (err) {
+						logger.info(queryStr);
+					} else {
+						if (results.affectedRows == 1){						//Step 2: Insert the movements in the MySQL DB
+						insertaMovimientos(results.insertId, proveedor, objectXML, connection);
+					} else {
+						logger.info(queryStr);
+					}	
+				}	
+			});
+		}
+	});		
 }
 
-function insertaMovimientos(xml, mso, objeto){
+function insertaMovimientos(xml, mso, objeto, connection){
 	error = false;	
 	for (var x = 0; x < objeto.root.movimiento.length; x++ ){
 		var idmso 		= objeto.root.movimiento[x].id;
@@ -99,25 +108,26 @@ function insertaMovimientos(xml, mso, objeto){
 		
 		var queryStr = "INSERT INTO `msodb`.`movimiento` (`id_xml`, `sc`, `mso`, `idmso`, `nombre`, `calle`, `ciudad`, `colonia`, `municipio`, `delegacion`, `numero_exterior`, `numero_interior`, `estado`, `pais`, `cp`, `email`, `fase`, `tipo`, `monto`) VALUES ("+xml+", '"+sc+"', '"+mso+"', '"+idmso+"', '"+nombre+"', '"+calle+"', '"+ciudad+"', '"+colonia+"', '"+municipio+"', '"+delegacion+"', '"+numero_exterior+"', '"+numero_interior+"', '"+estado+"', '"+pais+"', '"+cp+"', '"+email+"', '"+fase+"', '"+tipo+"', "+monto+");";
 		
-		client.query(queryStr, function (err, results, fields) {
-			if (err) {
-				logger.info(queryStr);
-				error = true;
-				finalStep( objeto.root.movimiento.length, x, error)
-			} else {
-				if (results.affectedRows == 1){						error = false;
-					finalStep( objeto.root.movimiento.length, x, error)
+				
+		connection.query(queryStr, function (err, results, fields) {
+				if (err) {
+						logger.info(queryStr);
+						error = true;
+						finalStep( objeto.root.movimiento.length, x, error, connection);
 				} else {
-					error = true;
-					logger.info(queryStr);
-					finalStep( objeto.root.movimiento.length, x, error)
+						if (results.affectedRows == 1){							error = false;
+							finalStep( objeto.root.movimiento.length, x, error, connection);
+						} else {
+							error = true;
+							logger.info(queryStr);
+							finalStep( objeto.root.movimiento.length, x, error, connection);
+						}	
 				}	
-			}	
-		});		
-	}	
+		});
+	}
 }
 
-function finalStep(original, count, error){
+function finalStep(original, count, error, connection){
 	if (original == count){
 		if (error){
 			system.spawn('cp', ['-r', config.xml_deposit(mso)+filename, config.xml_error(mso)+filename]);
@@ -127,6 +137,7 @@ function finalStep(original, count, error){
 			system.spawn('cp', ['-r', config.xml_deposit(mso)+filename, config.xml_backup()+"/ok/"+filename]);
 			system.spawn('rm', [config.xml_deposit(mso)+filename]);
 		}		
+		connection.end();
 	}
 }
 
