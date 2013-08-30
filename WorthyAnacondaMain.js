@@ -13,10 +13,11 @@ veo
 	console.log('File', path, 'has been added');
 	if (path.substr(-3) == "xml" ){
 		if (path.indexOf(config.msos[0]) >= 0){
-		var msoS = config.msos[0];
-		console.log("New File Received ("+new Date()+") : [MSO] "+msoS+" [Path] "+config.xml_deposit(msoS)+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
-		sleep.sleep(5);
-		xmlHandler.handleFile(msoS, path.substr(path.lastIndexOf("/")+1));
+			var msoS = config.msos[0];
+			console.log("New File Received ("+new Date()+") : [MSO] "+msoS+" [Path] "+config.xml_deposit(msoS)+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
+			sleep.sleep(5);
+			xmlHandler.handleFile(msoS, path.substr(path.lastIndexOf("/")+1));
+		}
 	}
   })
   .on('change', function(path) {
@@ -60,10 +61,11 @@ cablemas
 	console.log('File', path, 'has been added');
 	if (path.substr(-3) == "xml" ){
 		if (path.indexOf(config.msos[2]) >= 0){
-		var msoS = config.msos[2];
-		console.log("New File Received ("+new Date()+") : [MSO] "+msoS+" [Path] "+config.xml_deposit(msoS)+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
-		sleep.sleep(5);
-		xmlHandler.handleFile(msoS, path.substr(path.lastIndexOf("/")+1));
+			var msoS = config.msos[2];
+			console.log("New File Received ("+new Date()+") : [MSO] "+msoS+" [Path] "+config.xml_deposit(msoS)+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
+			sleep.sleep(5);
+			xmlHandler.handleFile(msoS, path.substr(path.lastIndexOf("/")+1));
+		}
 	}
   })
   .on('change', function(path) {
@@ -83,10 +85,11 @@ sky
 	console.log('File', path, 'has been added');
 	if (path.substr(-3) == "xml" ){
 		if (path.indexOf(config.msos[3]) >= 0){
-		var msoS = config.msos[3];
-		console.log("New File Received ("+new Date()+") : [MSO] "+msoS+" [Path] "+config.xml_deposit(msoS)+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
-		sleep.sleep(5);
-		xmlHandler.handleFile(msoS, path.substr(path.lastIndexOf("/")+1));
+			var msoS = config.msos[3];
+			console.log("New File Received ("+new Date()+") : [MSO] "+msoS+" [Path] "+config.xml_deposit(msoS)+" [FileName] "+path.substr(path.lastIndexOf("/")+1) );
+			sleep.sleep(5);
+			xmlHandler.handleFile(msoS, path.substr(path.lastIndexOf("/")+1));
+		}
 	}
   })
   .on('change', function(path) {
