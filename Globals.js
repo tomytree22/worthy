@@ -2,11 +2,11 @@
 var winston = require('winston');
 var logger = new (winston.Logger)({
   transports: [
-    new (winston.transports.Console)({ json: false, timestamp: true }),
+    new (winston.transports.Console)({ json: true, timestamp: true }),
     new winston.transports.File({ filename: __dirname + '/logs/backup.log', json: false })
   ],
   exceptionHandlers: [
-    new (winston.transports.Console)({ json: false, timestamp: true }),
+    new (winston.transports.Console)({ json: true, timestamp: true }),
     new winston.transports.File({ filename: __dirname + '/logs/exceptions.log', json: false })
   ],
   exitOnError: false
@@ -34,7 +34,7 @@ config.mysql.client_prod = {
 config.mysql.client_qa = {
         user:'root',
         password:'Pr0d1gy2',
-        host:'127.0.0.1'
+        host:'54.225.79.251'
 };
 
 /**

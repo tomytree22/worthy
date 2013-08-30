@@ -45,7 +45,6 @@ function handleParsedData(err, objectXML){
 		var inicial = objectXML.root.encabezado[0].periodo[0].$.inicial;
 		var final = objectXML.root.encabezado[0].periodo[0].$.final;
 		var movimientos = objectXML.root.encabezado[0].numero_movimientos[0];
-		console.log(proveedor + " " + inicial + " " + final + " " + movimientos);
 		
 		//Step 0: Validate that the number of "movimientos" reported on the XML is actually the number that exist in it.
 		if (movimientos != objectXML.root.movimiento.length){
@@ -74,6 +73,7 @@ function insertaXML (proveedor, inicial, final, movimientos, objectXML) {
 			connection.query(queryStr, function (err, results, fields) {
 					if (err) {
 						logger.info(queryStr);
+						console.log(err);
 					} else {
 						if (results.affectedRows == 1){						//Step 2: Insert the movements in the MySQL DB
 						insertaMovimientos(results.insertId, proveedor, objectXML, connection);
@@ -105,17 +105,31 @@ function insertaMovimientos(xml, mso, objeto, connection){
 		var fase		= objeto.root.movimiento[x].fase;
 		var tipo		= objeto.root.movimiento[x].tipo;
 		var monto_facturado		= objeto.root.movimiento[x].monto_facturado;
+		var fecha		= objeto.root.movimiento[x].fecha;		
 		var sc			= "0";
 		
-		var queryStr = "INSERT INTO `msodb`.`movimiento` (`id_xml`, `sc`, `mso`, `idmso`, `nombre`, `calle`, `ciudad`, `colonia`, `municipio`, `delegacion`, `numero_exterior`, `numero_interior`, `estado`, `pais`, `cp`, `email`, `fase`, `tipo`, `monto`, `concepto`) VALUES ("+xml+", '"+sc+"', '"+mso+"', '"+idmso+"', '"+nombre+"', '"+calle+"', '"+ciudad+"', '"+colonia+"', '"+municipio+"', '"+delegacion+"', '"+numero_exterior+"', '"+numero_interior+"', '"+estado+"', '"+pais+"', '"+cp+"', '"+email+"', '"+fase+"', '"+tipo+"', "+monto_facturado+", 'Suscripción Mensual SVOD');";
-		
+		var queryStr = "INSERT INTO `msodb`.`movimiento` (`id_xml`, `sc`, `mso`, `idmso`, `nombre`, `calle`, `ciudad`, `colonia`, `municipio`, `delegacion`, `numero_exterior`, `numero_interior`, `estado`, `pais`, `cp`, `email`, `fase`, `tipo`, `monto`, `concepto`, `fecha`) VALUES ("+xml+", '"+sc+"', '"+mso+"', '"+idmso+"', '"+nombre+"', '"+calle+"', '"+ciudad+"', '"+colonia+"', '"+municipio+"', '"+delegacion+"', '"+numero_exterior+"', '"+numero_interior+"', '"+estado+"', '"+pais+"', '"+cp+"', '"+email+"', '"+fase+"', '"+tipo+"', "+monto_facturado+", 'Suscripción Mensual SVOD', '"+fecha+"');";
+				
 		queryStr = queryStr.split("[object Object]").join("n/a");
 				
 		connection.query(queryStr, function (err, results, fields) {
 				if (err) {
-						logger.info(queryStr);
-						error = true;
-						finalStep( objeto.root.movimiento.length, x, error, connection);
+						if (err.code == "ER_DUP_ENTRY"){
+							var queryUpdate = queryStr.substr(queryStr.indexOf("VALUES (")+8);
+							queryUpdate = queryUpdate.substr(0,queryUpdate.length-2);
+							var items = queryUpdate.split(',');
+							
+							
+							var queryUpdate = "id_xml="+items[0]+",sc="+items[1]+",mso="+items[2]+",idmso="+items[3]+",nombre="+items[4]+",calle="+items[5]+",ciudad="+items[6]+",colonia="+items[7]+",municipio="+items[8]+",delegacion="+items[9]+",numero_exterior="+items[10]+",numero_interior="+items[11]+",estado="+items[12]+",pais="+items[13]+",cp="+items[14]+",email="+items[15]+",fase="+items[16]+",tipo="+items[17]+",monto="+items[18]+",concepto="+items[19]+",fecha="+items[20];
+							queryUpdate = "UPDATE movimiento SET "+queryUpdate+" WHERE mso = '"+mso+"' AND idmso = "+items[3]+";";
+							
+							actualizaMovimientos(queryUpdate, connection, objeto.root.movimiento.length, x, error);
+						} else {
+							logger.info(queryStr);
+							console.log(err);
+							error = true;	
+							finalStep( objeto.root.movimiento.length, x, error, connection);
+						}
 				} else {
 						if (results.affectedRows == 1){							error = false;
 							finalStep( objeto.root.movimiento.length, x, error, connection);
@@ -129,6 +143,27 @@ function insertaMovimientos(xml, mso, objeto, connection){
 	}
 }
 
+
+function actualizaMovimientos(queryStr, connection, original, count, error){
+	connection.query(queryStr, function (err, results, fields) {
+		if (err) {
+			logger.info(queryStr);
+			console.log(err);
+			error = true;	
+			finalStep( original, count, error, connection);
+		} else {
+			if (results.affectedRows == 1){
+				error = false;
+				finalStep(  original, count, error, connection);
+			} else {
+				error = true;
+				logger.info(queryStr);
+				finalStep( original, count, error, connection);
+			}
+		}
+	});
+}
+
 function finalStep(original, count, error, connection){
 	if (original == count){
 		if (error){
@@ -138,8 +173,8 @@ function finalStep(original, count, error, connection){
 		} else {
 			system.spawn('cp', ['-r', config.xml_deposit(mso)+filename, config.xml_backup()+"/ok/"+filename]);
 			system.spawn('rm', [config.xml_deposit(mso)+filename]);
-		}		
-		connection.end();
+		}	
+		connection.end();	
 	}
 }
 
