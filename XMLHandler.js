@@ -45,6 +45,7 @@ function handleParsedData(err, objectXML){
 		var inicial = objectXML.root.encabezado[0].periodo[0].$.inicial;
 		var final = objectXML.root.encabezado[0].periodo[0].$.final;
 		var movimientos = objectXML.root.encabezado[0].numero_movimientos[0];
+		console.log(proveedor + " " + inicial + " " + final + " " + movimientos);
 		
 		//Step 0: Validate that the number of "movimientos" reported on the XML is actually the number that exist in it.
 		if (movimientos != objectXML.root.movimiento.length){
@@ -103,11 +104,12 @@ function insertaMovimientos(xml, mso, objeto, connection){
 		var email		= objeto.root.movimiento[x].usuario[0].email;
 		var fase		= objeto.root.movimiento[x].fase;
 		var tipo		= objeto.root.movimiento[x].tipo;
-		var monto		= objeto.root.movimiento[x].monto;
+		var monto_facturado		= objeto.root.movimiento[x].monto_facturado;
 		var sc			= "0";
 		
-		var queryStr = "INSERT INTO `msodb`.`movimiento` (`id_xml`, `sc`, `mso`, `idmso`, `nombre`, `calle`, `ciudad`, `colonia`, `municipio`, `delegacion`, `numero_exterior`, `numero_interior`, `estado`, `pais`, `cp`, `email`, `fase`, `tipo`, `monto`, `concepto`) VALUES ("+xml+", '"+sc+"', '"+mso+"', '"+idmso+"', '"+nombre+"', '"+calle+"', '"+ciudad+"', '"+colonia+"', '"+municipio+"', '"+delegacion+"', '"+numero_exterior+"', '"+numero_interior+"', '"+estado+"', '"+pais+"', '"+cp+"', '"+email+"', '"+fase+"', '"+tipo+"', "+monto+", 'Suscripción Mensual SVOD');";
+		var queryStr = "INSERT INTO `msodb`.`movimiento` (`id_xml`, `sc`, `mso`, `idmso`, `nombre`, `calle`, `ciudad`, `colonia`, `municipio`, `delegacion`, `numero_exterior`, `numero_interior`, `estado`, `pais`, `cp`, `email`, `fase`, `tipo`, `monto`, `concepto`) VALUES ("+xml+", '"+sc+"', '"+mso+"', '"+idmso+"', '"+nombre+"', '"+calle+"', '"+ciudad+"', '"+colonia+"', '"+municipio+"', '"+delegacion+"', '"+numero_exterior+"', '"+numero_interior+"', '"+estado+"', '"+pais+"', '"+cp+"', '"+email+"', '"+fase+"', '"+tipo+"', "+monto_facturado+", 'Suscripción Mensual SVOD');";
 		
+		queryStr = queryStr.split("[object Object]").join("n/a");
 				
 		connection.query(queryStr, function (err, results, fields) {
 				if (err) {
