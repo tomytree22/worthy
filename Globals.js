@@ -44,9 +44,16 @@ config.mysql.database = 'msodb';
 
 config.msos = [ "veo", "cablevision", "cablemas", "sky" ];
 
+//ENVIRONMENTS
 config.xml_deposit 	= function (mso){ return "/home/"+mso+"/XML/"; };
 config.xml_error 	= function (mso){ return "/home/"+mso+"/ERROR_XML/"; };
 config.xml_backup 	= function (){ return "/root/WorthyAnaconda/backups/"; };
+
+/*DEV LOCALHOST
+config.xml_deposit 	= function (mso){ return "DEV/"+mso+"/XML/"; };
+config.xml_error 	= function (mso){ return "DEV/"+mso+"/ERROR_XML/"; };
+config.xml_backup 	= function (){ return "DEV/WorthyAnaconda/backups/"; };
+*/
 
 
 
