@@ -102,13 +102,13 @@ function insertaMovimientos(xml, mso, objeto, connection){
 		var pais		= objeto.root.movimiento[x].usuario[0].direccion[0].pais
 		var cp			= objeto.root.movimiento[x].usuario[0].direccion[0].cp;
 		var email		= objeto.root.movimiento[x].usuario[0].email;
-		var fase		= objeto.root.movimiento[x].fase;
+		var fase		= objeto.root.movimiento[x].fase+"";
 		var tipo		= objeto.root.movimiento[x].tipo;
 		var monto_facturado		= objeto.root.movimiento[x].monto_facturado;
 		var fecha		= objeto.root.movimiento[x].fecha;		
 		var sc			= "0";
 		
-		var queryStr = "INSERT INTO `msodb`.`movimiento` (`id_xml`, `sc`, `mso`, `idmso`, `nombre`, `calle`, `ciudad`, `colonia`, `municipio`, `delegacion`, `numero_exterior`, `numero_interior`, `estado`, `pais`, `cp`, `email`, `fase`, `tipo`, `monto`, `concepto`, `fecha`) VALUES ("+xml+", '"+sc+"', '"+mso+"', '"+idmso+"', '"+nombre+"', '"+calle+"', '"+ciudad+"', '"+colonia+"', '"+municipio+"', '"+delegacion+"', '"+numero_exterior+"', '"+numero_interior+"', '"+estado+"', '"+pais+"', '"+cp+"', '"+email+"', '"+fase+"', '"+tipo+"', "+monto_facturado+", 'Suscripción Mensual SVOD', '"+fecha+"');";
+		var queryStr = "INSERT INTO `msodb`.`movimiento` (`id_xml`, `sc`, `mso`, `idmso`, `nombre`, `calle`, `ciudad`, `colonia`, `municipio`, `delegacion`, `numero_exterior`, `numero_interior`, `estado`, `pais`, `cp`, `email`, `fase`, `tipo`, `monto`, `concepto`, `fecha`) VALUES ("+xml+", '"+sc+"', '"+mso.toUpperCase()+"', '"+idmso+"', '"+nombre+"', '"+calle+"', '"+ciudad+"', '"+colonia+"', '"+municipio+"', '"+delegacion+"', '"+numero_exterior+"', '"+numero_interior+"', '"+estado+"', '"+pais+"', '"+cp+"', '"+email+"', '"+fase.toUpperCase()+"', '"+tipo+"', "+monto_facturado+", 'Suscripción Mensual SVOD', '"+fecha+"');";
 				
 		queryStr = queryStr.split("[object Object]").join("n/a");
 				
@@ -121,7 +121,7 @@ function insertaMovimientos(xml, mso, objeto, connection){
 							
 							
 							var queryUpdate = "id_xml="+items[0]+",sc="+items[1]+",mso="+items[2]+",idmso="+items[3]+",nombre="+items[4]+",calle="+items[5]+",ciudad="+items[6]+",colonia="+items[7]+",municipio="+items[8]+",delegacion="+items[9]+",numero_exterior="+items[10]+",numero_interior="+items[11]+",estado="+items[12]+",pais="+items[13]+",cp="+items[14]+",email="+items[15]+",fase="+items[16]+",tipo="+items[17]+",monto="+items[18]+",concepto="+items[19]+",fecha="+items[20];
-							queryUpdate = "UPDATE movimiento SET "+queryUpdate+" WHERE mso = '"+mso+"' AND idmso = "+items[3]+";";
+							queryUpdate = "UPDATE movimiento SET "+queryUpdate+" WHERE mso = '"+mso.toUpperCase()+"' AND idmso = "+items[3]+";";
 							
 							actualizaMovimientos(queryUpdate, connection, objeto.root.movimiento.length, x, error);
 						} else {
