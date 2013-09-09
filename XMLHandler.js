@@ -104,7 +104,16 @@ function insertaMovimientos(xml, mso, objeto, connection){
 		var email		= objeto.root.movimiento[x].usuario[0].email;
 		var fase		= objeto.root.movimiento[x].fase+"";
 		var tipo		= objeto.root.movimiento[x].tipo;
-		var monto_facturado		= objeto.root.movimiento[x].monto_facturado;
+		if (fase.toUpperCase() == "COBRADO"){
+			var monto_facturado		= objeto.root.movimiento[x].monto_facturado;
+		} else if (fase.toUpperCase() == "PAGADO"){
+			var monto_facturado		= objeto.root.movimiento[x].monto_pagado;
+		} else if (fase.toUpperCase() == "EMITIDO"){
+			var monto_facturado		= objeto.root.movimiento[x].monto_facturado;
+		} else {
+			var monto_facturado		= objeto.root.movimiento[x].monto_facturado;
+		}
+
 		var fecha		= objeto.root.movimiento[x].fecha;		
 		var sc			= "0";
 		
