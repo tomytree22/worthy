@@ -91,16 +91,22 @@ function insertaMovimientos(xml, mso, objeto, connection){
 	for (var x = 0; x < objeto.root.movimiento.length; x++ ){
 		var idmso 		= objeto.root.movimiento[x].id;
 		var nombre		= objeto.root.movimiento[x].usuario[0].nombre;
-		var calle		= objeto.root.movimiento[x].usuario[0].direccion[0].calle;
-		var ciudad		= objeto.root.movimiento[x].usuario[0].direccion[0].ciudad;
-		var colonia		= objeto.root.movimiento[x].usuario[0].direccion[0].colonia;
-		var municipio	= objeto.root.movimiento[x].usuario[0].direccion[0].municipio;
-		var delegacion	= objeto.root.movimiento[x].usuario[0].direccion[0].delegacion;
-		var numero_exterior	= objeto.root.movimiento[x].usuario[0].direccion[0].numero_exterior;
-		var numero_interior	= objeto.root.movimiento[x].usuario[0].direccion[0].numero_interior;
-		var estado		= objeto.root.movimiento[x].usuario[0].direccion[0].estado
-		var pais		= objeto.root.movimiento[x].usuario[0].direccion[0].pais
-		var cp			= objeto.root.movimiento[x].usuario[0].direccion[0].cp;
+		if (objeto.root.movimiento[x].usuario[0].direccion != null){
+			var calle		= objeto.root.movimiento[x].usuario[0].direccion[0].calle;
+			var ciudad		= objeto.root.movimiento[x].usuario[0].direccion[0].ciudad;
+			var colonia		= objeto.root.movimiento[x].usuario[0].direccion[0].colonia;
+			var municipio	= objeto.root.movimiento[x].usuario[0].direccion[0].municipio;
+			var delegacion	= objeto.root.movimiento[x].usuario[0].direccion[0].delegacion;
+			var numero_exterior	= objeto.root.movimiento[x].usuario[0].direccion[0].numero_exterior;
+			var numero_interior	= objeto.root.movimiento[x].usuario[0].direccion[0].numero_interior;
+			var estado		= objeto.root.movimiento[x].usuario[0].direccion[0].estado
+			var pais		= objeto.root.movimiento[x].usuario[0].direccion[0].pais
+			var cp			= objeto.root.movimiento[x].usuario[0].direccion[0].cp;
+		} else {
+			var calle, ciudad, colonia, municipio, delegacion, numero_exterior, numero_interior, estado, pais, cp;
+			calle = ciudad = colonia = municipio = delegacion = numero_exterior = numero_interior = estado = pais = cp = 'n/a';
+			cp = '-1';
+		}		
 		var email		= objeto.root.movimiento[x].usuario[0].email;
 		var fase		= objeto.root.movimiento[x].fase+"";
 		var tipo		= objeto.root.movimiento[x].tipo;
