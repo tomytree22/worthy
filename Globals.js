@@ -27,14 +27,14 @@ config.mysql = {};
  */
 config.mysql.client_prod = {
         user:'veo',
-        password:'V30Pa55w0rd55',
-        host:'veoinstance.cqjzo7qtmihl.us-east-1.rds.amazonaws.com'
+        password:'',
+        host:''
 };
 
 config.mysql.client_qa = {
         user:'root',
-        password:'Pr0d1gy2',
-        host:'54.225.79.251'
+        password:'',
+        host:''
 };
 
 /**
